@@ -65,23 +65,27 @@ async function handleRequest(request) {
   // Transform response from PaLM to OpenAI format
   const transformedResponse = transformResponse(palmData);
 
-  if (body?.stream != true){
-      return new Response(JSON.stringify(transformedResponse), {
-        headers: {'Content-Type': 'application/json',
-                  'Access-Control-Allow-Origin': '*',
-                  'Access-Control-Allow-Methods': '*',
-                  'Access-Control-Allow-Headers': '*' }
-      });
-    } else {
-      let { readable, writable } = new TransformStream();
-      streamResponse(transformedResponse, writable);
-      return new Response(readable, {
-        headers: {'Content-Type': 'text/event-stream',  
-                  'Access-Control-Allow-Origin': '*',
-                  'Access-Control-Allow-Methods': '*',
-                  'Access-Control-Allow-Headers': '*' }
-      });
-    }
+  if (body?.stream != true) {
+    return new Response(JSON.stringify(transformedResponse), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Headers': '*'
+      }
+    });
+  } else {
+    let { readable, writable } = new TransformStream();
+    streamResponse(transformedResponse, writable);
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Headers': '*'
+      }
+    });
+  }
 }
 
 function streamResponse(response, writable) {
@@ -109,7 +113,7 @@ function streamResponse(response, writable) {
 
   // Write the done signal
   writer.write(encoder.encode(`data: [DONE]\n`));
-  
+
   writer.close();
 }
 
@@ -149,11 +153,11 @@ function transformResponse(palmData) {
 }
 
 async function handleOPTIONS(request) {
-    return new Response("pong", {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': '*',
-        'Access-Control-Allow-Headers': '*'
-      }
-    })
+  return new Response("pong", {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*',
+      'Access-Control-Allow-Headers': '*'
+    }
+  })
 }
